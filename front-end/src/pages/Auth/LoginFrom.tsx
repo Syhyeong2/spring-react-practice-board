@@ -70,9 +70,9 @@ export default function LoginForm() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         // 응답 데이터 파싱
-        const data = await response.text();
+        const data = await response.json();
         // 인증 상태 설정
-        setAuthenticated(true, user.username, data);
+        setAuthenticated(true, user.username, data.accessToken);
         // 메인 페이지로 이동
         navigate("/");
       } catch (error) {

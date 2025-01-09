@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-LoginJwtPracticeApplication<back-end>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.syhy.login_jwt_practice.LoginJwtPracticeApplication",
+      "projectName": "back-end",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

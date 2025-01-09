@@ -51,7 +51,14 @@ public class GlobalExceptionHandler {
     // 인증 실패 예외 처리
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.makeError("아이디 또는 비밀번호가 올바르지 않습니다", HttpStatus.UNAUTHORIZED, request.getRequestURI());
+        ErrorResponse error = ErrorResponse.makeError("아이디 또는 비밀번호가 올바르지 않습니다", HttpStatus.UNAUTHORIZED,
+                request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+    
+    @ExceptionHandler(RefreshTokenInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenInvalid(RefreshTokenInvalidException ex, HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.makeError(ex.getMessage(), HttpStatus.UNAUTHORIZED, request.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 

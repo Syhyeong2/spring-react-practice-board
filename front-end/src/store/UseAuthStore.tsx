@@ -6,6 +6,8 @@ interface IAuthStore {
   token: string;
   // 인증 상태
   isAuthenticated: boolean;
+  // 토큰 설정 함수
+  setToken: (token: string) => void;
   // 인증 상태 설정 함수
   setAuthenticated: (
     isAuthenticated: boolean,
@@ -27,6 +29,8 @@ export const useAuthStore = create<IAuthStore>()(
       user: "",
       // 인증 상태 초기값
       isAuthenticated: false,
+      // 토큰 설정 함수
+      setToken: (token: string) => set({ token }),
       // 인증 상태 설정 함수
       setAuthenticated: (
         isAuthenticated: boolean,

@@ -22,10 +22,11 @@ public class JwtTokenProvider {
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     // 토큰 만료 시간 설정
-    private final long EXPIRATION_TIME = 3000000; // 3000000ms = 3000s = 3000/60 = 50min
+    private final long ACCESS_EXPIRATION_TIME = 1000L * 10;   //1000L * 60 * 15;    // 15분
+    private final long REFRESH_EXPIRATION_TIME = 1000L * 20;     // 1000L * 60 * 60 * 24 * 7; // 7일
 
-    //JWT 토큰 생성
-    public String generateToken(String username) {
+    //JWT access 토큰 생성 
+    public String generateAccessToken(String username) {
         // 토큰 생성
         return Jwts.builder()
                 // 토큰 바디 설정
@@ -33,10 +34,20 @@ public class JwtTokenProvider {
                 // 토큰 발행 시간 설정
                 .setIssuedAt(new Date())
                 // 토큰 만료 시간 설정
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRATION_TIME))
                 // 토큰 서명 키 설정
                 .signWith(key)
                 // 토큰 컴팩트
+                .compact();
+    }
+
+    //JWT refresh 토큰 생성
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME))
+                .signWith(key)
                 .compact();
     }
     

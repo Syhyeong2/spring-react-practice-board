@@ -77,7 +77,7 @@ public class SecurityConfig {
 
         //인증 요청 설정: 특정 경로에 대한 인증을 비활성화하고, 나머지 요청은 인증된 사용자만 접근할 수 있도록 설정합니다.
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/h2-console/**", "/login", "/register").permitAll()
+                .requestMatchers("/api/auth/**", "/h2-console/**", "/login", "/register", "/refresh").permitAll()
                 .anyRequest().authenticated());
 
         //JWT 인증 필터 추가: JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가합니다.

@@ -52,7 +52,7 @@ export default function BoardList() {
     };
     // 패칭 함수 실행
     fetchBoardData();
-  }, [page]); // 의존성 배열에 필요한 값
+  }, [page, token]); // 의존성 배열에 필요한 값
 
   const handleSearch = () => {
     console.log(searchQuery);
