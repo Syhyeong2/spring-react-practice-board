@@ -22,8 +22,8 @@ public class JwtTokenProvider {
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     // 토큰 만료 시간 설정
-    private final long ACCESS_EXPIRATION_TIME = 1000L * 10;   //1000L * 60 * 15;    // 15분
-    private final long REFRESH_EXPIRATION_TIME = 1000L * 20;     // 1000L * 60 * 60 * 24 * 7; // 7일
+    private final long ACCESS_EXPIRATION_TIME = 1000L * 60 * 15;    // 15분
+    private final long REFRESH_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 1; // 1일
 
     //JWT access 토큰 생성 
     public String generateAccessToken(String username) {

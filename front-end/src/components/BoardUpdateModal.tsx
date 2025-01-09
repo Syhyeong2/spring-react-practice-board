@@ -15,10 +15,13 @@ export default function BoardUpdateModal({
 }) {
   // 토큰 상태
   const { token } = useAuthStore();
+  // 수정 로딩 상태
+  const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
   // 오류 처리 함수
   const { handleBoardError } = useErrorHandler();
   // 게시글 수정 함수
   const handleUpdate = async () => {
+    setIsUpdateLoading(true);
     const response = await updateBoard(board, boardProps?.id, token);
     if (response.status === 200) {
       // 모달 닫기
@@ -26,6 +29,7 @@ export default function BoardUpdateModal({
     } else {
       handleBoardError(response.status);
     }
+    setIsUpdateLoading(false);
   };
 
   // 게시글 데이터 상태
@@ -57,8 +61,12 @@ export default function BoardUpdateModal({
         />
         <div className="flex gap-3">
           {/* 수정 버튼 */}
-          <button className="btn btn-primary" onClick={handleUpdate}>
-            수정
+          <button
+            className="btn btn-primary"
+            onClick={handleUpdate}
+            disabled={isUpdateLoading}
+          >
+            {isUpdateLoading ? "수정중..." : "수정"}
           </button>
           {/* 닫기 버튼 */}
           <button

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { IBoard } from "../types/BoardTypes";
 import { searchBoard } from "../services/boardService";
 import useErrorHandler from "../hooks/useErrorHandler";
+import BoardCardSkeleton from "../components/BoardCardSkeleton";
+import BoardCard from "../components/BoardCard";
 
 export default function BoardSearch() {
   // 검색 키워드
@@ -14,6 +16,8 @@ export default function BoardSearch() {
   const navigate = useNavigate();
   // 게시판 데이터 상태
   const [boards, setBoards] = useState<IBoard[]>([]);
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // 페이지 상태
   const [page, setPage] = useState(0);
   // 오류 처리 함수
@@ -30,6 +34,8 @@ export default function BoardSearch() {
   useEffect(() => {
     // 패칭 함수
     const fetchBoardData = async () => {
+      // 로딩 상태 설정
+      setIsLoading(true);
       // 게시판 데이터 패칭
       const response = await searchBoard(params.toString(), token);
       // 응답 성공 여부
@@ -48,45 +54,21 @@ export default function BoardSearch() {
         // 에러 처리
         handleBoardError(response.status);
       }
+      // 로딩 상태 설정
+      setIsLoading(false);
     };
+    // 게시판 데이터 패칭
     fetchBoardData();
   }, [page]);
   console.log(boards);
   return (
     <div className="flex flex-col items-center justify-center gap-5">
       <div className="text-2xl font-bold mt-24">BoardSearch : {query}</div>
+      {isLoading && [...Array(10)].map((_, index) => <BoardCardSkeleton />)}
       {boards.length === 0 ? (
         <div className="text-2xl font-bold mt-10">검색 결과가 없습니다.</div>
       ) : (
-        boards.map((board, index) => (
-          <div
-            key={index}
-            className="card w-96 bg-base-100 shadow-xl cursor-pointer"
-            onClick={() => navigate(`/board/${board.id}`)}
-          >
-            <div className="card-body">
-              {/* 작성자 이름 */}
-              <div className="card-text text-white text-xs">
-                {board.user.username}
-              </div>
-              {/* 게시글 제목 */}
-              <div className="card-title text-primary">{board.title}</div>
-              {/* 게시글 내용 */}
-              <div className="card-text text-white">{board.content}</div>
-              {/* 게시글 작성 시간 */}
-              <div className="card-actions justify-end text-xs text-gray-500">
-                {new Date(board.createdAt).toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                })}
-              </div>
-            </div>
-          </div>
-        ))
+        boards.map((board, index) => <BoardCard board={board} index={index} />)
       )}
       <button className="btn btn-primary" onClick={() => setPage(page + 1)}>
         Next

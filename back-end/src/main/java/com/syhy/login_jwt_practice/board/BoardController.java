@@ -34,7 +34,6 @@ public class BoardController {
 
         // 게시판 목록 조회
         Page<BoardResponseDTO> boardResponseDTOs = boardService.getBoards(page, size);
-
         // 게시판 목록 반환
         return ResponseEntity.status(HttpStatus.OK).body(boardResponseDTOs);
     }
@@ -43,7 +42,6 @@ public class BoardController {
     @GetMapping("/boardDetail/{id}")
     public ResponseEntity<BoardResponseDTO> getBoardDetail(@PathVariable Long id) {
         log.info("getBoardDetail 호출");
-
         // 게시판 상세 조회
         BoardResponseDTO boardResponseDTO = boardService.getBoardDetail(id);
 
@@ -55,7 +53,6 @@ public class BoardController {
     @PostMapping("/boardWrite")
     public ResponseEntity<BoardEntity> writeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
         log.info("writeBoard 호출");
-
         // 인증 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -72,7 +69,6 @@ public class BoardController {
     public ResponseEntity<BoardEntity> updateBoard(@PathVariable Long id,
             @RequestBody BoardRequestDTO boardRequestDTO) {
         log.info(id + "번 게시글 updateBoard 호출");
-
         // 인증 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -88,7 +84,6 @@ public class BoardController {
     @DeleteMapping("/boardDelete/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
         log.info(id + "번 게시글 deleteBoard 호출");
-
         // 인증 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -107,4 +102,5 @@ public class BoardController {
         log.info("searchBoard 호출" + query);
         return ResponseEntity.ok(boardService.searchBoard(query, page, size));
     }
+
 }
