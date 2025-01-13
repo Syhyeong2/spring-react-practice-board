@@ -60,7 +60,7 @@ export default function BoardSearch() {
     // 게시판 데이터 패칭
     fetchBoardData();
   }, [page]);
-  console.log(boards);
+
   return (
     <div className="flex flex-col items-center justify-center gap-5">
       <div className="text-2xl font-bold mt-24">BoardSearch : {query}</div>
