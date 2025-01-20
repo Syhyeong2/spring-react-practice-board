@@ -27,6 +27,7 @@ export default function LoginForm() {
 
   // 로그인 요청 핸들러
   const handleSubmit = async (event: React.FormEvent) => {
+    console.log("handleSubmit");
     //default 이벤트 방지
     event.preventDefault();
 
@@ -114,6 +115,16 @@ export default function LoginForm() {
       <button type="submit" className="btn btn-primary w-64">
         Login
       </button>
+      {/* 깃허브 로그인 구현 */}
+      <div
+        className="btn btn-primary w-64 mt-5"
+        onClick={() => {
+          window.location.href =
+            "http://localhost:8080/oauth2/authorization/github";
+        }}
+      >
+        GitHub Login
+      </div>
     </form>
   );
 }

@@ -30,6 +30,7 @@ public class BoardService {
     // 게시글 전체 조회
     // Page 
     public Page<BoardResponseDTO> getBoards(int page, int size) {
+        
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<BoardEntity> boardEntities = boardRepository.findAll(pageRequest);
         return boardEntities.map(BoardResponseDTO::fromEntity);

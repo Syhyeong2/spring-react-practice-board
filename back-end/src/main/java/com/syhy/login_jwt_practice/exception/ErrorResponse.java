@@ -15,7 +15,7 @@ public class ErrorResponse {
     private final int status;              // HTTP 상태 코드
     private final String error;            // 오류 요약 (e.g., NOT_FOUND)
     private final String message;          // 상세 메시지
-    private final String path;
+    private final String path;             // 요청 경로
     
 public static ErrorResponse makeError(String message, HttpStatus status, String path) {
         return ErrorResponse.builder()

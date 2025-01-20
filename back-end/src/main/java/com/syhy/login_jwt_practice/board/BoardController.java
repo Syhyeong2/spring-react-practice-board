@@ -31,8 +31,6 @@ public class BoardController {
     @GetMapping("/boardList")
     public ResponseEntity<Page<BoardResponseDTO>> getBoards(@RequestParam int page, @RequestParam int size) {
         log.info("getBoards 호출");
-
-
         // 게시판 목록 조회
         Page<BoardResponseDTO> boardResponseDTOs = boardService.getBoards(page, size);
         // 게시판 목록 반환
