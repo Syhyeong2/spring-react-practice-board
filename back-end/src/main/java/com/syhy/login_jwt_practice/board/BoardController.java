@@ -53,8 +53,11 @@ public class BoardController {
     public ResponseEntity<BoardEntity> writeBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
         log.info("writeBoard 호출");
         // 인증 정보 추출
+        
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
 
         // 게시판 작성
         boardService.writeBoard(boardRequestDTO, username);

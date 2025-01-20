@@ -60,7 +60,9 @@ public class BoardService {
     // 게시글 작성
     public BoardEntity writeBoard(BoardRequestDTO boardRequestDTO, String username) {
         // 유저 조회
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username + "유저가 존재하지 않습니다."));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException(username + " 유저가 존재하지 않습니다."));
+        
         // 게시글 엔티티 생성
         try {
             BoardEntity boardEntity = new BoardEntity();
@@ -80,7 +82,7 @@ public class BoardService {
     // 게시글 수정
     public BoardEntity updateBoard(Long id, BoardRequestDTO boardRequestDTO, String username) {
         // 유저 조회
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username + "유저가 존재하지 않습니다."));
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException(username + " 유저가 존재하지 않습니다."));
 
         // 게시글 엔티티 조회
         BoardEntity boardEntity = boardRepository.findById(id)
@@ -105,7 +107,7 @@ public class BoardService {
     // 게시글 삭제
     public void deleteBoardById(Long id, String username) {
         // 유저 조회
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException(username + "유저가 존재하지 않습니다."));
         
         // 게시글 엔티티 조회
