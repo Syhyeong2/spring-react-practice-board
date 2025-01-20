@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuthStore } from "../store/UseAuthStore";
 import { useEffect, useState } from "react";
 import { IBoard } from "../types/BoardTypes";
 import { searchBoard } from "../services/boardService";
@@ -10,8 +9,6 @@ import BoardCard from "../components/BoardCard";
 export default function BoardSearch() {
   // 검색 키워드
   const { query } = useParams();
-  // 토큰
-  const { token } = useAuthStore();
   // 네비게이션 함수
   const navigate = useNavigate();
   // 게시판 데이터 상태
@@ -37,7 +34,7 @@ export default function BoardSearch() {
       // 로딩 상태 설정
       setIsLoading(true);
       // 게시판 데이터 패칭
-      const response = await searchBoard(params.toString(), token);
+      const response = await searchBoard(params.toString());
       // 응답 성공 여부
       if (response.success) {
         setBoards((prev) => {

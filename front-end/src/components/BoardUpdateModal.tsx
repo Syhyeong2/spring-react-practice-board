@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuthStore } from "../store/UseAuthStore";
 import { updateBoard } from "../services/boardService";
 import useErrorHandler from "../hooks/useErrorHandler";
 
@@ -14,7 +13,6 @@ export default function BoardUpdateModal({
   boardProps: any | null;
 }) {
   // 토큰 상태
-  const { token } = useAuthStore();
   // 수정 로딩 상태
   const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
   // 오류 처리 함수
@@ -22,7 +20,7 @@ export default function BoardUpdateModal({
   // 게시글 수정 함수
   const handleUpdate = async () => {
     setIsUpdateLoading(true);
-    const response = await updateBoard(board, boardProps?.id, token);
+    const response = await updateBoard(board, boardProps?.id);
     if (response.status === 200) {
       // 모달 닫기
       setIsEditModalOpen(false);

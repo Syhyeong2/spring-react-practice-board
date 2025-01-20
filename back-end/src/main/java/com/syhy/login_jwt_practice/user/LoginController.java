@@ -1,5 +1,7 @@
 package com.syhy.login_jwt_practice.user;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,7 @@ public class LoginController {
 
     // 로그인 앤드포인트
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDTO> login(@RequestBody UserRequestDTO user, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody UserRequestDTO user, HttpServletResponse response) {
         System.out.println("user: " + user);
         // 아이디/비밀번호 검증
         Authentication authentication = authenticationManager.authenticate(
@@ -47,14 +49,19 @@ public class LoginController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true); // HTTPS 환경 필수
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일
+        refreshTokenCookie.setMaxAge(1 * 24 * 60 * 60);
+
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true); // HTTPS 환경 필수
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(15 * 60);
+
 
         response.addCookie(refreshTokenCookie);
+        response.addCookie(accessTokenCookie);
 
-        JwtResponseDTO jwtResponseDTO = new JwtResponseDTO();
-        jwtResponseDTO.setAccessToken(accessToken);
-
-        return ResponseEntity.ok(jwtResponseDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 사용자 등록 앤드포인트
@@ -69,7 +76,7 @@ public class LoginController {
 
     // 리프레시 토큰 재발급 앤드포인트  
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponseDTO> refresh(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("refresh 호출");
         // 리프레시 토큰 쿠키 추출
         String refreshToken = null;
@@ -99,17 +106,44 @@ public class LoginController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        refreshTokenCookie.setMaxAge(1 * 24 * 60 * 60);
+
+        
+        // 새로운 액세스 토큰 반환
+        Cookie accessTokenCookie = new Cookie("accessToken", newAccessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(15 * 60);
 
         response.addCookie(refreshTokenCookie);
+        response.addCookie(accessTokenCookie);
 
-        // 새로운 액세스 토큰 반환
-        JwtResponseDTO jwtResponseDTO = new JwtResponseDTO();
-        jwtResponseDTO.setAccessToken(newAccessToken);
-
-        return ResponseEntity.status(HttpStatus.OK).body(jwtResponseDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+
+    @PostMapping("/delete-cookies")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // (1) accessToken 쿠키 만료시키기
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setMaxAge(0); // 즉시 만료
+        // SameSite 설정이 필요하다면 직접 추가
+        response.addCookie(accessTokenCookie);
+
+        // (2) refreshToken 쿠키 만료시키기
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setMaxAge(0);
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok().body("Logged out successfully");
+    }
 
 
 
@@ -118,16 +152,16 @@ public class LoginController {
     @GetMapping("/test")
     public ResponseEntity<String> test(HttpServletRequest request) {
         // Extract the token from the Authorization header
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7).trim(); // Remove "Bearer " prefix and trim spaces
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Authorization header");
-        }
-        
-        // Validate the token
-        if (jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.ok("your token is valid");
+        // 쿠키에서 accessToken 가져오기
+        Cookie accessTokenCookie = Arrays.stream(request.getCookies())
+            .filter(cookie -> "accessToken".equals(cookie.getName()))
+            .findFirst()
+            .orElse(null);  
+        if (accessTokenCookie != null) {
+            String accessToken = accessTokenCookie.getValue();
+            if (jwtTokenProvider.validateToken(accessToken)) {
+                return ResponseEntity.ok("your token is valid");
+            }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("your token is invalid");
     }

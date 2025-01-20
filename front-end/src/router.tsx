@@ -3,12 +3,13 @@ import Root from "./Root";
 import BoardList from "./pages/BoardList";
 import LoginForm from "./pages/Auth/LoginFrom";
 import RegisterForm from "./pages/Auth/RegisterForm";
-import { useAuthStore } from "./store/UseAuthStore";
 import AuthHome from "./pages/Auth/AuthHome";
 import BoardWrite from "./pages/BoardWrite";
 import BoardDetail from "./pages/BoardDetail";
 import AuthRoot from "./pages/AuthRoot";
 import BoardSearch from "./pages/BoardSearch";
+import { useAuthStore } from "./store/useAuthStore";
+import { Oauth2Callback } from "./components/Oauth2Callback";
 
 // 인증된 사용자만 접근 가능한 라우트
 function AuthenticatedRoute({ children }: { children: JSX.Element }) {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
         element: <RegisterForm />,
       },
     ],
+  },
+  {
+    path: "/oauth2/callback",
+    element: <Oauth2Callback />,
   },
 ]);
 

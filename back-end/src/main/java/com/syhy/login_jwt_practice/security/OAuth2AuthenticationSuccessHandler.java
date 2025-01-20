@@ -1,14 +1,14 @@
 package com.syhy.login_jwt_practice.security;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -33,17 +33,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String accessToken = jwtTokenProvider.generateAccessToken(user.getAttribute("email"));
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getAttribute("email"));
 
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        response.addCookie(refreshTokenCookie);
 
-        response.setContentType("application/json");
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("accessToken", accessToken);
-        
-        Cookie accessTokenCookie = new Cookie("refreshToken", refreshToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        response.addCookie(accessTokenCookie);
-
-        response.sendRedirect("http://localhost:3000/");
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        // 클라이언트에게 리다이렉트 응답 보내기
+        String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/callback")
+            .build().toUriString();
+        response.sendRedirect(redirectUrl);
+    
     }
 }

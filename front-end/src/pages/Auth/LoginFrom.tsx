@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/UseAuthStore";
+import { useAuthStore } from "../../store/useAuthStore";
 export default function LoginForm() {
-  // 인증 상태 함수 가져오기
-  const { setAuthenticated } = useAuthStore();
-
   // 메인 페이지로 이동
   const navigate = useNavigate();
 
@@ -68,14 +65,11 @@ export default function LoginForm() {
         });
         // 응답 상태 확인
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`Login error! status: ${response.status}`);
         }
-        // 응답 데이터 파싱
-        const data = await response.json();
-        // 인증 상태 설정
-        setAuthenticated(true, user.username, data.accessToken);
-        // 메인 페이지로 이동
-        navigate("/");
+        // 로그인 성공 시 인증 상태 설정
+        useAuthStore.getState().login();
+        navigate("/board");
       } catch (error) {
         // 에러 처리
         console.error("Error:", error);
