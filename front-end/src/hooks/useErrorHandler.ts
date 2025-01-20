@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/UseAuthStore";
 import apiClient from "../utils/ApiClient";
+import { logout } from "../services/authService";
+import { useAuthStore } from "../store/useAuthStore";
 
 // Define a type for the response data
 interface RefreshResponse {
@@ -8,7 +9,6 @@ interface RefreshResponse {
 }
 
 const useErrorHandler = () => {
-  const { logout, setToken } = useAuthStore();
   const navigate = useNavigate();
 
   const handleBoardError = async (status?: number) => {
@@ -20,20 +20,23 @@ const useErrorHandler = () => {
             method: "POST",
           });
           if (response.status === 200 && response.data) {
-            setToken(response.data.accessToken);
+            useAuthStore.getState().login();
           } else {
-            logout();
+            await logout();
+            useAuthStore.getState().logout();
             navigate("/auth");
           }
         } catch (error) {
-          logout();
+          await logout();
+          useAuthStore.getState().logout();
           navigate("/auth");
         }
 
         break;
       case 403:
         console.log("403 Forbidden");
-        logout();
+        await logout();
+        useAuthStore.getState().logout();
         navigate("/auth");
         break;
       case 404:

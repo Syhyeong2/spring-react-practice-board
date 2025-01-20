@@ -1,17 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/UseAuthStore";
 import { Link } from "react-router-dom";
+import { logout } from "../services/authService";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function Header() {
   // 인증 상태 함수 가져오기
-  const { logout, token } = useAuthStore();
 
   // 페이지 이동을 위한 함수 가져오기
   const navigate = useNavigate();
 
   // 로그아웃 함수
   const handleLogout = async () => {
-    logout();
+    await logout();
+    useAuthStore.getState().logout();
     navigate("/auth");
   };
 
@@ -19,18 +20,12 @@ export default function Header() {
   const handleTestAuth = async () => {
     try {
       // 테스트 인증 요청
-      const response = await fetch("http://localhost:3000/test", {
-        // 헤더 설정
-        headers: {
-          // 인증 토큰 포함
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch("http://localhost:3000/test", {});
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
           // 토큰 만료 시 재인증 처리
           alert("Session expired. Please log in again.");
-          logout();
+          //to-do 로그아웃 처리
           navigate("/auth");
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);

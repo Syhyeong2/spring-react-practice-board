@@ -1,4 +1,3 @@
-import { useAuthStore } from "../store/UseAuthStore";
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getBoardList } from "../services/boardService";
@@ -13,8 +12,7 @@ export default function BoardList() {
   const [boards, setBoards] = useState<IBoard[]>([]);
   // 로딩 상태
   const [isLoading, setIsLoading] = useState(false);
-  // 로그아웃 함수, 토큰을 전역 상태에서 가져옴
-  const { token } = useAuthStore();
+
   // 관찰 대상 요소
   const observerTarget = useRef<HTMLDivElement | null>(null);
   // 에러 처리 커스텀 훅
@@ -34,7 +32,7 @@ export default function BoardList() {
     // 로딩 상태 업데이트
     setIsLoading(true);
     // 게시판 데이터 패칭
-    const response = await getBoardList(params.toString(), token);
+    const response = await getBoardList(params.toString());
     // 응답 성공 여부
     if (response.success) {
       // 게시판 데이터 업데이트
@@ -58,7 +56,7 @@ export default function BoardList() {
       // 에러 처리
       handleBoardError(response.status);
     }
-  }, [page, token]);
+  }, [page]);
 
   // 페이지 변경 시 게시판 데이터 가져오기
   useEffect(() => {

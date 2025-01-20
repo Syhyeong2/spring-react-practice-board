@@ -14,9 +14,11 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(UserRequestDTO request) {
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User user = User.builder()
+            .username(request.getUsername())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .email(request.getEmail())
+            .build();
         
         return userRepository.save(user);
     }

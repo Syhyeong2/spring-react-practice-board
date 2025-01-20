@@ -5,6 +5,7 @@ export default function RegisterForm() {
   const [user, setUser] = useState({
     username: "",
     password: "",
+    email: "",
   });
   const [error, setError] = useState(false);
 
@@ -13,6 +14,7 @@ export default function RegisterForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setUser({ ...user, [id]: value });
+    console.log(user);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,6 +54,13 @@ export default function RegisterForm() {
         type="password"
         id="password"
         placeholder="Password"
+        onChange={handleChange}
+        className="input input-bordered w-64 mb-5"
+      />
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
         onChange={handleChange}
         className="input input-bordered w-64 mb-5"
       />

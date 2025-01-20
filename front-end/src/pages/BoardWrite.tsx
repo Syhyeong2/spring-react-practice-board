@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuthStore } from "../store/UseAuthStore";
 import { useNavigate } from "react-router-dom";
 import { writeBoard } from "../services/boardService";
 import useErrorHandler from "../hooks/useErrorHandler";
@@ -12,8 +11,6 @@ export default function BoardWrite() {
   });
   // 오류 상태
   const [error, setError] = useState("");
-  // 토큰 상태
-  const { token } = useAuthStore();
   // 네비게이션 함수
   const navigate = useNavigate();
 
@@ -21,7 +18,7 @@ export default function BoardWrite() {
   const { handleBoardError } = useErrorHandler();
   // 게시글 작성 함수
   const handleWrite = async () => {
-    const response = await writeBoard(board, token);
+    const response = await writeBoard(board);
     if (response.status === 201) {
       navigate("/board");
     } else {
